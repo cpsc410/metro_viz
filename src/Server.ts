@@ -14,6 +14,15 @@ console.log(input.fetchData());
 app.get('/api/map', (_req: Request, res: Response) => {
   res.json({ "__": "this will eventually be the map data to be rendered" });
 });
+app.get('/api/map/:fileName', (_req: Request, res: Response) => {
+  res.json({ "__": "this will eventually be a way to get additional info about a specific file in the map??? potentially link to github or send content?" });
+});
+app.get('/api/legend', (_req: Request, res: Response) => {
+  res.json({ "__": "this will eventually be a listing of contributors" });
+});
+app.get('/api/metadata', (_req: Request, res: Response) => {
+  res.json({ "__": "this will eventually produce any metadata needed (map titles, creation date, other stuff...)" });
+});
 
 // maybe more endpoints here if we need them???
 
