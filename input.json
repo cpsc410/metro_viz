@@ -1,0 +1,5 @@
+[{
+  "name": "foo.txt",
+  "contributors": ["a", "b", "c"],
+  "path": "/wow"
+}]

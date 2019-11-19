@@ -1,10 +1,15 @@
 import { Request, Response } from 'express';
 import express = require('express');
+import InputSystem from './input/InputSystem';
+import BoringStaticJSONReader from './input/BoringStaticJSONReader';
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 // do all the processing here
+
+const input: InputSystem = new BoringStaticJSONReader();
+console.log(input.fetchData());
 
 app.get('/api/map', (_req: Request, res: Response) => {
   res.json({ "__": "this will eventually be the map data to be rendered" });
