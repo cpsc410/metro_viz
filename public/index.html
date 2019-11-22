@@ -2,9 +2,33 @@
 <html lang="en">
 <head>
     <title>metro map</title>
+    <style>
+        #mapHolder{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+        }
+    </style>
 </head>
 <body>
+    <div id="mapHolder"></div>
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3-color.v1.min.js"></script>
+    <script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
+    <script src="https://d3js.org/d3-ease.v1.min.js"></script>
+    <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+    <script src="https://d3js.org/d3-selection.v1.min.js"></script>
+    <script src="https://d3js.org/d3-timer.v1.min.js"></script>
+    <script src="https://d3js.org/d3-transition.v1.min.js"></script>
+    <script src="https://d3js.org/d3-drag.v1.min.js"></script>
+    <script src="https://d3js.org/d3-zoom.v1.min.js"></script>
+    <script>
+
+      var zoom = d3.zoom();
+
+    </script>
+    <script src="d3-tube-map.js"></script>
     <script src="metro.js"></script>
 </body>
 </html>
