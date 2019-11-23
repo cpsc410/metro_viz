@@ -13,17 +13,25 @@ export default class SnapperFacade {
       let lineNames: Set<string> = new Set();
       let edgeNodes: Set<string> = new Set();
       let edgeMap = {};
+
       for (let node of nodes){
         input.nodes.push({id: node.name, label: node.name, metadata: {x: node.x, y: node.y}});
         for (let edge of node.edges){
-          edgeNodes.add(node.name);
-          edgeNodes.add(edge.target.name);
-          lineNames.add(edge.contributor);
-          if(!edgeMap[node.name + edge.target.name]){
-            edgeMap[node.name + edge.target.name] = {source: node.name, target: edge.target.name, relation: "subway", metadata: {lines: []}};
-          }
-          if(edgeMap[node.name + edge.target.name].metadata.lines.indexOf(edge.contributor) === -1) {
-            edgeMap[node.name + edge.target.name].metadata.lines.push(edge.contributor);
+          if(edge.contributor === "Ben") {
+            edgeNodes.add(node.name);
+            edgeNodes.add(edge.target.name);
+            lineNames.add(edge.contributor);
+            if (!edgeMap[node.name + edge.target.name]) {
+              edgeMap[node.name + edge.target.name] = {
+                source: node.name,
+                target: edge.target.name,
+                relation: "subway",
+                metadata: { lines: [] }
+              };
+            }
+            if (edgeMap[node.name + edge.target.name].metadata.lines.indexOf(edge.contributor) === -1) {
+              edgeMap[node.name + edge.target.name].metadata.lines.push(edge.contributor);
+            }
           }
         }
       }
@@ -40,7 +48,7 @@ export default class SnapperFacade {
       });
       console.log(util.inspect(input, { depth: 4 }));
       let map = await transitMap(input);
-      //console.log(util.inspect(map, { depth: 4 }));
+      console.log(util.inspect(map, { depth: 4 }));
       const svg = svgTransitMap(map, false);
       return virtualDomStringify(svg)
   }

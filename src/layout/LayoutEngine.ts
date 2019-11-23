@@ -118,7 +118,7 @@ export default class LayoutEngine {
 
     private trySnaptoNearest(node: LayoutNode, nodes: LayoutNode[]) {
         //Find closest node (probably not the fastest way of doin this)
-        let minNode = this.findClosestNode(node, nodes).minNode;
+        let minNode = this.findClosestNode(node, nodes, "").minNode;
 
         let diffX = node.x - minNode.x;
         let diffY = node.y - minNode.y;
@@ -131,12 +131,10 @@ export default class LayoutEngine {
 
     }
 
-    private findClosestNode(node: LayoutNode, nodes: LayoutNode[]): {minNode: LayoutNode, minDist: number} {
+    private findClosestNode(node: LayoutNode, nodes: LayoutNode[], contributor: string): {minNode: LayoutNode, minDist: number} {
         let minDist = Number.MAX_VALUE;
         let minNode = null;
-        nodes.filter((n) => {
-            return node.contributors.some(r => n.contributors.indexOf(r) >= 0) && node != n
-        }).forEach((n)  => {
+        nodes.filter((n) => n.contributors.indexOf(contributor) >= 0 && node != n).forEach((n)  => {
             let dist = this.euclidianDistance(node, n);
             if (dist < minDist) {
                 minDist = dist;
@@ -148,55 +146,67 @@ export default class LayoutEngine {
     }
 
     private attachEdges(nodes: LayoutNode[]) {
-        let remainingNodes = [...nodes].filter(node => node.contributors.length > 0);
-        let result = [remainingNodes[0]];
-        remainingNodes.splice(0, 1);
-
-        while (remainingNodes.length > 0) {
-            let minDist = Number.MAX_VALUE, minEdge: NodeEdge = null;
-
-            // Find the shortest edge in the result
-            result.filter(n => n.edges.length <= this.MAX_EDGES).forEach((node) => {
-                let resultClosest = this.findClosestNode(node, remainingNodes)
-
-                if (resultClosest.minDist < minDist && resultClosest.minDist > 0) {
-                    minDist = resultClosest.minDist;
-                    minEdge = {
-                        target: resultClosest.minNode,
-                        source: node,
-                        contributor: ""
-                    };
-                }
+        let allContributors: Set<string> = new Set();
+        nodes.forEach((node) => {
+            node.contributors.forEach((contrib) => {
+                allContributors.add(contrib);
             });
+        });
 
-            if (minEdge == null) {
-                // if we can't find any edges, add a new random node
-                result.push(remainingNodes[0]);
-                remainingNodes.splice(0, 1);
-                continue;
+        let returnVal: LayoutNode[] = [...nodes];
+
+        allContributors.forEach((contributor) => {
+            let remainingNodes = [...returnVal].filter(node => node.contributors.indexOf(contributor) > -1);
+            let result = [remainingNodes[0]];
+            remainingNodes.splice(0, 1);
+
+            while (remainingNodes.length > 0) {
+                let minDist = Number.MAX_VALUE, minEdge: NodeEdge = null;
+
+                // Find the shortest edge in the result
+                result.filter(n => n.edges.length <= this.MAX_EDGES).forEach((node) => {
+                    let resultClosest = this.findClosestNode(node, remainingNodes, contributor)
+
+                    if (resultClosest.minDist < minDist && resultClosest.minDist > 0) {
+                        minDist = resultClosest.minDist;
+                        minEdge = {
+                            target: resultClosest.minNode,
+                            source: node,
+                            contributor: contributor
+                        };
+                    }
+                });
+
+                if (minEdge == null) {
+                    // if we can't find any edges, add a new random node
+                    result.push(remainingNodes[0]);
+                    continue;
+                }
+
+                // console.log(minEdge);
+
+                // minEdge.source.contributors.forEach((contributor) => {
+                //     if (minEdge.target.contributors.includes(contributor)) {
+                //         minEdge.source.edges.push({
+                //             source: minEdge.source,
+                //             target: minEdge.target,
+                //             contributor: contributor
+                //         });
+                //     }
+                // });
+
+                minEdge.source.edges.push(minEdge)
+
+                if (result.indexOf(minEdge.target) == -1) {
+                    result.push(minEdge.target);
+                }
+                remainingNodes.splice(remainingNodes.indexOf(minEdge.target), 1);
+                console.log(result.length + " " + remainingNodes.length);
+                console.log(nodes.length)
             }
 
-            // console.log(minEdge);
+        });
 
-            minEdge.source.contributors.forEach((contributor) => {
-                if (minEdge.target.contributors.includes(contributor)) {
-                    minEdge.source.edges.push({
-                        source: minEdge.source,
-                        target: minEdge.target,
-                        contributor: contributor
-                    });
-                }
-            });
-
-            if (result.indexOf(minEdge.target) == -1) {
-                result.push(minEdge.target);
-            }
-            remainingNodes.splice(remainingNodes.indexOf(minEdge.target), 1);
-            console.log(result.length + " " + remainingNodes.length);
-            console.log(nodes.length)
-        }
-
-        return result;
+        return returnVal;
     }
-
 }
