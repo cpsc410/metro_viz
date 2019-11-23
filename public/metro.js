@@ -24,7 +24,7 @@ d3.xml('./api/map')
     const parentNode = d3.select("circle").node().parentNode;
 
     d3.selectAll("circle").each(function () {
-      d3.select(this.parentNode).insert("text", "[data-id=" + this.getAttribute('data-id') + "]").node().data = this;
+      d3.select(this.parentNode).insert("text", "[data-id=\"" + this.getAttribute('data-id') + "\"]").node().data = this;
     });
 
     d3.selectAll("text").text(function() {

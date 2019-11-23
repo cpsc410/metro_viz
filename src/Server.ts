@@ -5,6 +5,7 @@ import BoringStaticJSONReader from './input/BoringStaticJSONReader';
 // import SnapperFacade from './layout/SnapperFacade';
 // import { LayoutNode } from './layout/LayoutNode';
 import LayoutEngine from './layout/LayoutEngine';
+import SnapperFacade from './layout/SnapperFacade';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -13,8 +14,7 @@ const port = process.env.PORT || 3000;
 
 const input: InputSystem = new BoringStaticJSONReader();
 // console.log(input.fetchData());
-const layout: LayoutEngine = new LayoutEngine()
-layout.layoutNodes(input.fetchData());
+const layout: LayoutEngine = new LayoutEngine();
 
 // do all the processing here
 
@@ -26,7 +26,10 @@ layout.layoutNodes(input.fetchData());
 
 let map = "";
 
-// SnapperFacade.SNAP_NODES([sampleFileA, sampleFileB, sampleFileC]).then((r: any) => map = r).catch((err: any) => console.log(err));
+let nodes = layout.layoutNodes(input.fetchData());
+console.log(nodes);
+
+SnapperFacade.SNAP_NODES(nodes).then((r: any) => map = r).catch((err: any) => console.log(err));
 
 
 app.get('/api/map', (_req: Request, res: Response) => {

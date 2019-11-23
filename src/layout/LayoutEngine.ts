@@ -8,11 +8,11 @@ export default class LayoutEngine {
     private readonly SIZE_X = 1000;
     private readonly SIZE_Y = 600;
 
-    private readonly MIN_DISTANCE = 5;
+    private readonly MIN_DISTANCE = 50;
     private readonly INFLUENCE_DISTANCE = 200;
     private readonly SNAP_DISTANCE = 6;
 
-    private readonly MOVE_FACTOR_TOWARDS = 0.4;
+    private readonly MOVE_FACTOR_TOWARDS = 0.1;
     private readonly MOVE_FACTOR_AWAY = 0.1;
 
     public layoutNodes(fileList: AnalysisFileList): LayoutNode[] {
@@ -44,7 +44,7 @@ export default class LayoutEngine {
         })
 
         //Load all files as nodes
-        // let packages = new Set(); 
+        // let packages = new Set();
 
         // for (let dirLevel = 1; packages.size < this.MAX_PACKAGES; dirLevel++) {
         //     packages.clear();
@@ -65,7 +65,7 @@ export default class LayoutEngine {
         // }
 
         // fileList.forEach((f) => {
-            
+
         // });
         nodes = this.attachEdges(nodes)
         this.printAsCsv(nodes);
@@ -101,7 +101,7 @@ export default class LayoutEngine {
                 console.log("move away x = " + String(diffX * this.MOVE_FACTOR_AWAY))
                 console.log("move away y = " + String(diffY * this.MOVE_FACTOR_AWAY))
             }
-            
+
             node.x = node.x > this.SIZE_X ? this.SIZE_X : node.x
             node.x = node.x < 0 ? 0 : node.x
             node.y = node.y > this.SIZE_Y ? this.SIZE_Y : node.y
@@ -136,7 +136,7 @@ export default class LayoutEngine {
         }).forEach((n)  => {
             let dist = this.euclidianDistance(node, n);
             if (dist < minDist) {
-                dist = minDist;
+                minDist = dist;
                 minNode = n;
             }
         })
@@ -160,10 +160,9 @@ export default class LayoutEngine {
                         });
                     }
                 }));
-                result.push(node);
             }
+          result.push(node);
         }
-        result.push(remainingNodes.pop());
 
         return result;
     }
