@@ -67,6 +67,7 @@ export default class LayoutEngine {
         // fileList.forEach((f) => {
             
         // });
+        this.attachEdges(nodes)
         this.printAsCsv(nodes);
 
         return nodes;
@@ -114,15 +115,7 @@ export default class LayoutEngine {
 
     private trySnaptoNearest(node: LayoutNode, nodes: LayoutNode[]) {
         //Find closest node (probably not the fastest way of doin this)
-        let minDist = Number.MAX_VALUE;
-        let minNode;
-        nodes.forEach((n)  => {
-            let dist = this.euclidianDistance(node, n);
-            if (dist < minDist && dist > 0) {
-                dist = minDist;
-                minNode = n;
-            }
-        })
+        let minNode = this.findClosestNode(node, nodes)
 
         let diffX = node.x - minNode.x;
         let diffY = node.y - minNode.y;
@@ -133,5 +126,38 @@ export default class LayoutEngine {
             node.y = minNode.y;
         }
 
+    }
+
+    private findClosestNode(node: LayoutNode, nodes: LayoutNode[]): LayoutNode {
+        let minDist = Number.MAX_VALUE;
+        let minNode;
+        nodes.filter((n) => {
+            node.contributors.some(r => n.contributors.indexOf(r) >= 0) &&
+            node != n
+        }).forEach((n)  => {
+            let dist = this.euclidianDistance(node, n);
+            if (dist < minDist) {
+                dist = minDist;
+                minNode = n;
+            }
+        })
+
+        return minNode;
+    }
+
+    private attachEdges(nodes: LayoutNode[]) {
+        let remainingNodes = [...nodes];
+        while (remainingNodes.length > 1) {
+            let node = remainingNodes.pop();
+            let closest = this.findClosestNode(node, remainingNodes);
+            node.contributors.forEach((contrib => {
+                if (closest.contributors.some(r => r == contrib)) {
+                    node.edges.push({
+                        contributor: contrib,
+                        target: closest
+                    });
+                }
+            }));
+        }
     }
 }
