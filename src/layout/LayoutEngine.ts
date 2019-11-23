@@ -22,7 +22,7 @@ export default class LayoutEngine {
             nodes.push({
                 name: file.name,
                 contributors: file.contributors,
-                edges: null,
+                edges: [],
                 x: Math.random() * (this.SIZE_X * 0.5),
                 y: Math.random() * (this.SIZE_Y *  0.5)
             })
@@ -67,7 +67,7 @@ export default class LayoutEngine {
         // fileList.forEach((f) => {
             
         // });
-        this.attachEdges(nodes)
+        nodes = this.attachEdges(nodes)
         this.printAsCsv(nodes);
 
         return nodes;
@@ -130,10 +130,9 @@ export default class LayoutEngine {
 
     private findClosestNode(node: LayoutNode, nodes: LayoutNode[]): LayoutNode {
         let minDist = Number.MAX_VALUE;
-        let minNode;
+        let minNode = null;
         nodes.filter((n) => {
-            node.contributors.some(r => n.contributors.indexOf(r) >= 0) &&
-            node != n
+            return node.contributors.some(r => n.contributors.indexOf(r) >= 0) && node != n
         }).forEach((n)  => {
             let dist = this.euclidianDistance(node, n);
             if (dist < minDist) {
@@ -147,17 +146,25 @@ export default class LayoutEngine {
 
     private attachEdges(nodes: LayoutNode[]) {
         let remainingNodes = [...nodes];
+        let result = [];
         while (remainingNodes.length > 1) {
             let node = remainingNodes.pop();
             let closest = this.findClosestNode(node, remainingNodes);
-            node.contributors.forEach((contrib => {
-                if (closest.contributors.some(r => r == contrib)) {
-                    node.edges.push({
-                        contributor: contrib,
-                        target: closest
-                    });
-                }
-            }));
+            console.log(closest);
+            if (closest != null) {
+                node.contributors.forEach((contrib => {
+                    if (closest.contributors.some(r => r == contrib)) {
+                        node.edges.push({
+                            contributor: contrib,
+                            target: closest
+                        });
+                    }
+                }));
+                result.push(node);
+            }
         }
+        result.push(remainingNodes.pop());
+
+        return result;
     }
 }
