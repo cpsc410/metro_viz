@@ -9,4 +9,5 @@ export interface LayoutNode {
 export interface NodeEdge {
     contributor: string;
     target: LayoutNode;
+    source: LayoutNode;
 }

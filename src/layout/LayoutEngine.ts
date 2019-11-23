@@ -1,5 +1,5 @@
 import { AnalysisFileList} from '../input/AnalysisOutput';
-import { LayoutNode } from './LayoutNode'
+import { LayoutNode, NodeEdge } from './LayoutNode'
 // import { LayoutNode, NodeEdge } from './LayoutNode'
 
 export default class LayoutEngine {
@@ -14,6 +14,8 @@ export default class LayoutEngine {
 
     private readonly MOVE_FACTOR_TOWARDS = 0.4;
     private readonly MOVE_FACTOR_AWAY = 0.1;
+
+    private readonly MAX_EDGES = 3;
 
     public layoutNodes(fileList: AnalysisFileList): LayoutNode[] {
         let nodes: LayoutNode[] = [];
@@ -68,7 +70,8 @@ export default class LayoutEngine {
             
         // });
         nodes = this.attachEdges(nodes)
-        this.printAsCsv(nodes);
+        false && this.printAsCsv(nodes);
+        console.log(nodes)
 
         return nodes;
     }
@@ -115,7 +118,7 @@ export default class LayoutEngine {
 
     private trySnaptoNearest(node: LayoutNode, nodes: LayoutNode[]) {
         //Find closest node (probably not the fastest way of doin this)
-        let minNode = this.findClosestNode(node, nodes)
+        let minNode = this.findClosestNode(node, nodes).minNode;
 
         let diffX = node.x - minNode.x;
         let diffY = node.y - minNode.y;
@@ -128,7 +131,7 @@ export default class LayoutEngine {
 
     }
 
-    private findClosestNode(node: LayoutNode, nodes: LayoutNode[]): LayoutNode {
+    private findClosestNode(node: LayoutNode, nodes: LayoutNode[]): {minNode: LayoutNode, minDist: number} {
         let minDist = Number.MAX_VALUE;
         let minNode = null;
         nodes.filter((n) => {
@@ -136,35 +139,63 @@ export default class LayoutEngine {
         }).forEach((n)  => {
             let dist = this.euclidianDistance(node, n);
             if (dist < minDist) {
-                dist = minDist;
+                minDist = dist;
                 minNode = n;
             }
         })
 
-        return minNode;
+        return {minNode: minNode, minDist: minDist};
     }
 
     private attachEdges(nodes: LayoutNode[]) {
-        let remainingNodes = [...nodes];
-        let result = [];
-        while (remainingNodes.length > 1) {
-            let node = remainingNodes.pop();
-            let closest = this.findClosestNode(node, remainingNodes);
-            console.log(closest);
-            if (closest != null) {
-                node.contributors.forEach((contrib => {
-                    if (closest.contributors.some(r => r == contrib)) {
-                        node.edges.push({
-                            contributor: contrib,
-                            target: closest
-                        });
-                    }
-                }));
-                result.push(node);
+        let remainingNodes = [...nodes].filter(node => node.contributors.length > 0);
+        let result = [remainingNodes[0]];
+        remainingNodes.splice(0, 1);
+
+        while (remainingNodes.length > 0) {
+            let minDist = Number.MAX_VALUE, minEdge: NodeEdge = null;
+
+            // Find the shortest edge in the result
+            result.filter(n => n.edges.length <= this.MAX_EDGES).forEach((node) => {
+                let resultClosest = this.findClosestNode(node, remainingNodes)
+
+                if (resultClosest.minDist < minDist && resultClosest.minDist > 0) {
+                    minDist = resultClosest.minDist;
+                    minEdge = {
+                        target: resultClosest.minNode,
+                        source: node,
+                        contributor: ""
+                    };
+                }
+            });
+
+            if (minEdge == null) {
+                // if we can't find any edges, add a new random node
+                result.push(remainingNodes[0]);
+                continue;
             }
+
+            // console.log(minEdge);
+
+            minEdge.source.contributors.forEach((contributor) => {
+                if (minEdge.target.contributors.includes(contributor)) {
+                    minEdge.source.edges.push({
+                        source: minEdge.source,
+                        target: minEdge.target,
+                        contributor: contributor
+                    });
+                }
+            });
+
+            if (result.indexOf(minEdge.target) == -1) {
+                result.push(minEdge.target);
+            }
+            remainingNodes.splice(remainingNodes.indexOf(minEdge.target), 1);
+            console.log(result.length + " " + remainingNodes.length);
+            console.log(nodes.length)
         }
-        result.push(remainingNodes.pop());
 
         return result;
     }
+
 }
