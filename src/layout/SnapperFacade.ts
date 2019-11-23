@@ -2,10 +2,12 @@ import transitMap = require('transit-map');
 import { LayoutNode } from './LayoutNode';
 import svgTransitMap = require('svg-transit-map');
 import virtualDomStringify = require('virtual-dom-stringify');
+import ColorPicker from './ColorPicker';
 
 
 export default class SnapperFacade {
   public static async SNAP_NODES(nodes: LayoutNode[]): Promise<any>{
+      let color: ColorPicker = new ColorPicker();
       let input: any = {"nodes": [], "lines": [], "edges": []};
       let lineNames: Set<string> = new Set();
       let edgeMap = {};
@@ -23,7 +25,7 @@ export default class SnapperFacade {
         input.edges.push(edge);
       }
       lineNames.forEach((name: string) => {
-        input.lines.push({id: name, color: "#0a3c85"});
+        input.lines.push({id: name, color: color.getNext()});
       });
       let map = await transitMap(input);
       const svg = svgTransitMap(map, false);
