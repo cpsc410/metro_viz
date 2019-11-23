@@ -164,7 +164,9 @@ export default class LayoutEngine {
                 let minDist = Number.MAX_VALUE, minEdge: NodeEdge = null;
 
                 // Find the shortest edge in the result
-                result.filter(n => n.edges.length <= this.MAX_EDGES).forEach((node) => {
+                result.filter((n) => {
+                    n.edges.filter(n => n.contributor.indexOf(contributor) > -1).length <= this.MAX_EDGES
+                }).forEach((node) => {
                     let resultClosest = this.findClosestNode(node, remainingNodes, contributor)
 
                     if (resultClosest.minDist < minDist && resultClosest.minDist > 0) {
