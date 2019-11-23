@@ -26,16 +26,9 @@ export default class LayoutEngine {
             })
         })
 
-        nodes.forEach((node) => {
-            let compare = nodes[Math.floor(Math.random() * nodes.length)];
-            this.pushPull(node, compare);
+        nodes.forEach((target) => {
+            nodes.forEach((node) => this.pushPull(node, target));
         });
-
-
-
-
-
-
 
         //Load all files as nodes
         // let packages = new Set(); 
@@ -61,8 +54,6 @@ export default class LayoutEngine {
         // fileList.forEach((f) => {
             
         // });
-
-
 
         return nodes;
     }
