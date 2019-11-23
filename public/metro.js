@@ -19,4 +19,23 @@ d3.xml('./api/map')
       .on('zoom', zoomed);
 
     const zoomContainer = svg.call(zoomy);
+
+
+    const parentNode = d3.select("circle").node().parentNode;
+
+    d3.selectAll("circle").each(function () {
+      d3.select(this.parentNode).insert("text", "[data-id=" + this.getAttribute('data-id') + "]").node().data = this;
+    });
+
+    d3.selectAll("text").text(function() {
+      return this.data.getAttribute('data-label');
+    }).attr("x", function() {
+      return (this.data.getAttribute('cx') || 0) - 0.04;
+    }).attr("y", function() {
+      return (this.data.getAttribute('cy') || 0) - 0.12;
+    }).attr('font-size', '0.1');
+
+    container.selectAll('circle').on('click', function(data) {
+      console.log(this.getAttribute('data-label'));
+    });
   });
