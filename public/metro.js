@@ -28,7 +28,7 @@ d3.xml('./api/map')
     });
 
     d3.selectAll("text").text(function() {
-      return this.data.getAttribute('data-label');
+      return this.data.getAttribute('data-label').substr(this.data.getAttribute('data-label').lastIndexOf("/") + 1);
     }).attr("x", function() {
       return (this.data.getAttribute('cx') || 0) - 0.04;
     }).attr("y", function() {
@@ -38,4 +38,13 @@ d3.xml('./api/map')
     container.selectAll('circle').on('click', function(data) {
       console.log(this.getAttribute('data-label'));
     });
+    let hidden = false;
+    document.onkeypress = function(e) {
+      console.log(e);
+      if(e.key === 'l'){
+        if(hidden) d3.selectAll("text").style('display', 'block');
+        else d3.selectAll("text").style('display', 'none');
+        hidden = !hidden;
+      }
+    };
   });

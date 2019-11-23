@@ -1,9 +1,9 @@
-// import transitMap = require('transit-map');
+import transitMap = require('transit-map');
 import { LayoutNode } from './LayoutNode';
 import svgTransitMap = require('svg-transit-map');
 import virtualDomStringify = require('virtual-dom-stringify');
 import ColorPicker from './ColorPicker';
-//const util = require('util');
+const util = require('util');
 
 
 export default class SnapperFacade {
@@ -19,10 +19,12 @@ export default class SnapperFacade {
           edgeNodes.add(node.name);
           edgeNodes.add(edge.target.name);
           lineNames.add(edge.contributor);
-          if(!edgeMap[node.name + edge.target]){
-            edgeMap[node.name + edge.target] = {source: node.name, target: edge.target.name, relation: "subway", metadata: {lines: []}};
+          if(!edgeMap[node.name + edge.target.name]){
+            edgeMap[node.name + edge.target.name] = {source: node.name, target: edge.target.name, relation: "subway", metadata: {lines: []}};
           }
-          edgeMap[node.name + edge.target].metadata.lines.push(edge.contributor);
+          if(edgeMap[node.name + edge.target.name].metadata.lines.indexOf(edge.contributor) === -1) {
+            edgeMap[node.name + edge.target.name].metadata.lines.push(edge.contributor);
+          }
         }
       }
       for(let edge of Object.values(edgeMap)){
@@ -36,10 +38,10 @@ export default class SnapperFacade {
       lineNames.forEach((name: string) => {
         input.lines.push({id: name, color: color.getNext()});
       });
-      //console.log(util.inspect(input, { depth: 4 }));
-      // let map = await transitMap(input);
+      console.log(util.inspect(input, { depth: 4 }));
+      let map = await transitMap(input);
       //console.log(util.inspect(map, { depth: 4 }));
-      const svg = svgTransitMap(input, false);
+      const svg = svgTransitMap(map, false);
       return virtualDomStringify(svg)
   }
 
