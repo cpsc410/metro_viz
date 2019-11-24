@@ -27,7 +27,7 @@ const layout: LayoutEngine = new LayoutEngine();
 let map = "";
 
 let nodes = layout.layoutNodes(input.fetchData());
-console.log(nodes);
+//console.log(nodes);
 
 SnapperFacade.SNAP_NODES(nodes).then((r: any) => map = r).catch((err: any) => console.log(err));
 

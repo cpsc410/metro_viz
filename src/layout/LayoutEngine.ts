@@ -71,7 +71,7 @@ export default class LayoutEngine {
         // });
         nodes = this.attachEdges(nodes)
         false && this.printAsCsv(nodes);
-        console.log(nodes)
+        //console.log(nodes)
 
         return nodes;
     }
@@ -165,7 +165,7 @@ export default class LayoutEngine {
 
                 // Find the shortest edge in the result
                 result.filter((n) => {
-                    n.edges.filter(n => n.contributor.indexOf(contributor) > -1).length <= this.MAX_EDGES
+                    return n.edges.filter(n => n.contributor.indexOf(contributor) > -1).length <= this.MAX_EDGES
                 }).forEach((node) => {
                     let resultClosest = this.findClosestNode(node, remainingNodes, contributor)
 
