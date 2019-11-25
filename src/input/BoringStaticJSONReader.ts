@@ -8,7 +8,7 @@ import fs = require('fs');
  */
 export default class BoringStaticJSONReader implements InputSystem{
   public fetchData(): AnalysisFileItem[] {
-    let json = JSON.parse(fs.readFileSync("javaOut.json").toString());
+    let json = JSON.parse(fs.readFileSync("input.json").toString());
     let output: AnalysisFileItem[] = [];
       json.forEach(element => {
         output.push({
