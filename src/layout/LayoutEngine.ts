@@ -101,8 +101,8 @@ export default class LayoutEngine {
             } else if (dist < this.INFLUENCE_DISTANCE) {
                 node.x -= diffX * this.MOVE_FACTOR_AWAY;
                 node.y -= diffY * this.MOVE_FACTOR_AWAY;
-                console.log("move away x = " + String(diffX * this.MOVE_FACTOR_AWAY))
-                console.log("move away y = " + String(diffY * this.MOVE_FACTOR_AWAY))
+                //console.log("move away x = " + String(diffX * this.MOVE_FACTOR_AWAY))
+                //console.log("move away y = " + String(diffY * this.MOVE_FACTOR_AWAY))
             }
 
             node.x = node.x > this.SIZE_X ? this.SIZE_X : node.x
@@ -208,8 +208,6 @@ export default class LayoutEngine {
                     result.push(minEdge.target);
                 }
                 remainingNodes.splice(remainingNodes.indexOf(minEdge.target), 1);
-                console.log(result.length + " " + remainingNodes.length);
-                console.log(nodes.length)
             }
 
         });

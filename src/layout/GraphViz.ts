@@ -33,7 +33,6 @@ export default class GraphViz{
         for (let object of objects){
           for (let node of nodes){
             if(object.name === node.name){
-              console.log("adjusting");
               object.contributors = node.contributors;
               const coord = object.pos.split(',');
               node.x = coord[1];

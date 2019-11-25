@@ -15,7 +15,7 @@ export default class SnapperFacade {
       let edgeMap = {};
 
       for (let node of nodes){
-        console.log(node);
+        //console.log(node);
         input.nodes.push({id: node.name, label: node.name, metadata: {x: node.x, y: node.y}});
         for (let edge of node.edges){
             edgeNodes.add(node.name);
