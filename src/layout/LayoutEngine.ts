@@ -170,7 +170,7 @@ export default class LayoutEngine {
 
                 // Find the shortest edge in the result
                 result.filter((n) => {
-                    return n.edges.filter(n => n.contributor.indexOf(contributor) > -1).length <= this.MAX_EDGES
+                    return n.edges.filter(n => n.contributor.indexOf(contributor) > -1).length < this.MAX_EDGES
                 }).forEach((node) => {
                     let resultClosest = this.findClosestNode(node, remainingNodes, contributor)
 
