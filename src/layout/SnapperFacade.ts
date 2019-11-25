@@ -15,21 +15,23 @@ export default class SnapperFacade {
       let edgeMap = {};
 
       for (let node of nodes){
+        console.log(node);
         input.nodes.push({id: node.name, label: node.name, metadata: {x: node.x, y: node.y}});
         for (let edge of node.edges){
             edgeNodes.add(node.name);
             edgeNodes.add(edge.target.name);
             lineNames.add(edge.contributor);
-            if (!edgeMap[node.name + edge.target.name]) {
-              edgeMap[node.name + edge.target.name] = {
+            let edgeName = SnapperFacade.getEdgePairName(node.name, edge.target.name);
+            if (!edgeMap[edgeName]) {
+              edgeMap[edgeName] = {
                 source: node.name,
                 target: edge.target.name,
                 relation: "subway",
                 metadata: { lines: [] }
               };
             }
-            if (edgeMap[node.name + edge.target.name].metadata.lines.indexOf(edge.contributor) === -1) {
-              edgeMap[node.name + edge.target.name].metadata.lines.push(edge.contributor);
+            if (edgeMap[edgeName].metadata.lines.indexOf(edge.contributor) === -1) {
+              edgeMap[edgeName].metadata.lines.push(edge.contributor);
             }
           }
       }
@@ -45,13 +47,17 @@ export default class SnapperFacade {
       let svg;
 ;      try {
         let map = await transitMap(input);
-        svg = svgTransitMap(map, false);
+        svg = svgTransitMap(map, true);
       }
       catch (e) {
         console.error("SOLVER FAILURE: Your repo has no solution. Sorry :(");
-        svg = svgTransitMap(input, false);
+        svg = svgTransitMap(input, true);
       }
       return virtualDomStringify(svg)
+  }
+
+  private static getEdgePairName(one: string, two: string){
+    return one > two ? one + two : two + one;
   }
 
 }

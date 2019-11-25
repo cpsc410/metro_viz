@@ -6,6 +6,8 @@ import BoringStaticJSONReader from './input/BoringStaticJSONReader';
 // import { LayoutNode } from './layout/LayoutNode';
 import LayoutEngine from './layout/LayoutEngine';
 import SnapperFacade from './layout/SnapperFacade';
+import GraphViz from './layout/GraphViz';
+import * as fs from 'fs';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -27,13 +29,16 @@ const layout: LayoutEngine = new LayoutEngine();
 let map = "";
 
 let nodes = layout.layoutNodes(input.fetchData());
-//console.log(nodes);
 
-SnapperFacade.SNAP_NODES(nodes).then((r: any) => map = r).catch((err: any) => console.log(err));
+GraphViz.VIZ_GRAPH(nodes).then(SnapperFacade.SNAP_NODES).then((r: any) => map = r).catch((err: any) => console.log(err));
+//console.log(nodes);
 
 
 app.get('/api/map', (_req: Request, res: Response) => {
   res.end(map);
+});
+app.get('/api/mapg', (_req: Request, res: Response) => {
+  res.end(fs.readFileSync("gvout.json"));
 });
 app.get('/api/map/:fileName', (_req: Request, res: Response) => {
   res.json({ "__": "this will eventually be a way to get additional info about a specific file in the map??? potentially link to github or send content?" });

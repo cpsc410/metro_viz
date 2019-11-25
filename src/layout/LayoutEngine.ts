@@ -9,13 +9,13 @@ export default class LayoutEngine {
     private readonly SIZE_Y = 600;
 
     private readonly MIN_DISTANCE = 50;
-    private readonly INFLUENCE_DISTANCE = 200;
+    private readonly INFLUENCE_DISTANCE = 300;
     private readonly SNAP_DISTANCE = 6;
 
     private readonly MOVE_FACTOR_TOWARDS = 0.1;
     private readonly MOVE_FACTOR_AWAY = 0.1;
 
-    private readonly MAX_EDGES = 3;
+    private readonly MAX_EDGES = 2;
 
     public layoutNodes(fileList: AnalysisFileList): LayoutNode[] {
         let nodes: LayoutNode[] = [];
@@ -136,6 +136,11 @@ export default class LayoutEngine {
         let minNode = null;
         nodes.filter((n) => n.contributors.indexOf(contributor) >= 0 && node != n).forEach((n)  => {
             let dist = this.euclidianDistance(node, n);
+            for (let edge of n.edges){
+              if(edge.contributor === contributor){ // No self loops, let's not go somewhere we have been already
+                return;
+              }
+            }
             if (dist < minDist) {
                 minDist = dist;
                 minNode = n;
