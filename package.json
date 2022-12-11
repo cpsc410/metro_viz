@@ -32,7 +32,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@types/express": "^4.17.2",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "graphviz": "0.0.9",
     "open": "^7.0.0",
     "svg-transit-map": "0.0.1",
